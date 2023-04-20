@@ -42,9 +42,13 @@ const port = 8000;
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const User_1 = __importDefault(require("./models/User"));
+const Post_1 = __importDefault(require("./models/Post"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const multer_1 = __importDefault(require("multer"));
+const uploadMiddleware = (0, multer_1.default)({ dest: 'uploads/' });
+const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const salt = bcrypt_1.default.genSaltSync(10);
 const secret = 'sdadjanfjknfnqeiwdhd123245';
@@ -102,6 +106,40 @@ app.get('/profile', (req, res) => {
 app.post('/logout', (req, res) => {
     res.cookie('token', '').json('ok');
 });
+app.post('/post', uploadMiddleware.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const file = req.file;
+    if (!file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    const { originalname, path } = file;
+    if (!originalname || !path) {
+        return res.status(400).json({ error: 'File name or path is missing' });
+    }
+    const parts = originalname.split('.');
+    const ext = parts[parts.length - 1];
+    const newPath = path + '.' + ext;
+    fs_1.default.renameSync(path, newPath);
+    const { token } = req.cookies;
+    jsonwebtoken_1.default.verify(token, secret, {}, (err, info) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err)
+            throw err;
+        const { title, summary, content } = req.body;
+        if (!info || typeof info === 'string') {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        const postDoc = yield Post_1.default.create({
+            title,
+            summary,
+            content,
+            cover: newPath,
+            author: info.id
+        });
+        res.json(postDoc);
+    }));
+}));
+app.get('/post', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json(yield Post_1.default.find().populate('author', ['username']));
+}));
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
 });

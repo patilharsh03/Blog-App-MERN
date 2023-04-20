@@ -5,9 +5,13 @@ const port = 8000;
 import cors from "cors";
 import mongoose from "mongoose";
 import User from "./models/User";
+import Post from './models/Post'
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
+import multer from 'multer'
+const uploadMiddleware = multer({ dest: 'uploads/'})
+import fs from 'fs'
 
 const app: Express = express();
 
@@ -70,6 +74,42 @@ app.get('/profile', (req: Request, res: Response) => {
 
 app.post('/logout', (req: Request, res: Response) => {
     res.cookie('token', '').json('ok')
+})
+
+app.post('/post', uploadMiddleware.single('file'), async (req: Request, res: Response) => {
+  const file = req.file
+  if (!file) {
+    return res.status(400).json({ error: 'No file uploaded'})
+  }
+  const { originalname, path } = file
+  if (!originalname || !path ) {
+    return res.status(400).json({ error: 'File name or path is missing'})
+  }
+  const parts = originalname.split('.')
+  const ext = parts[parts.length - 1]
+  const newPath = path+'.'+ext
+  fs.renameSync(path, newPath)
+
+  const { token } = req.cookies
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) throw err
+    const { title, summary, content } = req.body
+    if (!info || typeof info === 'string') {
+      return res.status(401).json({ error: 'Unauthorized'})
+    }
+    const postDoc = await Post.create({
+    title,
+    summary,
+    content,
+    cover: newPath,
+    author: info.id as string
+  })
+    res.json(postDoc)
+  })
+})
+
+app.get('/post', async (req, res) => {
+  res.json(await Post.find().populate('author', ['username']))
 })
 
 app.listen(port, () => {

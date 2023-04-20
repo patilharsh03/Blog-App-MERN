@@ -1,4 +1,15 @@
-const Post = () => {
+import { format } from 'date-fns'
+
+export interface PostProps {
+  title: string;
+  summary: string;
+  content: string;
+  cover: string;
+  createdAt: string;
+  author: string,
+}
+
+const Post = ({title, summary, content, cover, createdAt, author}: PostProps) => {
   return (
     <div className="post">
         <div className="image">
@@ -8,17 +19,13 @@ const Post = () => {
         />
         </div>
         <div className="texts">
-          <h2>What We’re Reading: Aren’t humans amazing sometimes?</h2>
+          <h2>{title}</h2>
           <p className="info">
-            <a className="author">Harsh Patil</a>
-            <time>2023-04-17 13:50</time>
+            <a className="author">{author.username}</a>
+            <time>{format(new Date(createdAt), 'MMM d, yyyy HH:mm')}</time>
           </p>
           <p className="summary">
-            Humans are amazing sometimes. In the midst of *gestures broadly*
-            everything happening in the world right now, it’s worth coming back
-            to this simple truth from time to time, and I wanted to share two
-            stories from Medium this week that illustrate the point in two very
-            different ways.
+            {summary}
           </p>
         </div>
       </div>
