@@ -47,14 +47,15 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const multer_1 = __importDefault(require("multer"));
-const uploadMiddleware = (0, multer_1.default)({ dest: 'uploads/' });
+const uploadMiddleware = (0, multer_1.default)({ dest: "uploads/" });
 const fs_1 = __importDefault(require("fs"));
 const app = (0, express_1.default)();
 const salt = bcrypt_1.default.genSaltSync(10);
-const secret = 'sdadjanfjknfnqeiwdhd123245';
-app.use((0, cors_1.default)({ credentials: true, origin: 'http://localhost:5173' }));
+const secret = "sdadjanfjknfnqeiwdhd123245";
+app.use((0, cors_1.default)({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+app.use('/uploads', express_1.default.static(process.cwd + '/uploads'));
 const databaseSecret = process.env.DATABASE_SECRET;
 if (!databaseSecret) {
     throw new Error("DATABASE_SECRET is not defined");
@@ -73,11 +74,11 @@ app.post("/register", (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(400).json(e);
     }
 }));
-app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     const userDoc = yield User_1.default.findOne({ username });
     if (!userDoc) {
-        return res.status(401).json({ message: 'Invalid username or password' });
+        return res.status(401).json({ message: "Invalid username or password" });
     }
     const passOk = bcrypt_1.default.compareSync(password, userDoc.password);
     if (passOk) {
@@ -85,17 +86,17 @@ app.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         jsonwebtoken_1.default.sign({ username, id: userDoc._id }, secret, {}, (err, token) => {
             if (err)
                 throw err;
-            res.cookie('token', token).json({
+            res.cookie("token", token).json({
                 id: userDoc._id,
-                username
+                username,
             });
         });
     }
     else {
-        res.status(400).json('wrong credentials');
+        res.status(400).json("wrong credentials");
     }
 }));
-app.get('/profile', (req, res) => {
+app.get("/profile", (req, res) => {
     const { token } = req.cookies;
     jsonwebtoken_1.default.verify(token, secret, {}, (err, info) => {
         if (err)
@@ -103,42 +104,42 @@ app.get('/profile', (req, res) => {
         res.json(info);
     });
 });
-app.post('/logout', (req, res) => {
-    res.cookie('token', '').json('ok');
+app.post("/logout", (req, res) => {
+    res.cookie("token", "").json("ok");
 });
-app.post('/post', uploadMiddleware.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post("/post", uploadMiddleware.single("file"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const file = req.file;
     if (!file) {
-        return res.status(400).json({ error: 'No file uploaded' });
+        return res.status(400).json({ error: "No file uploaded" });
     }
     const { originalname, path } = file;
     if (!originalname || !path) {
-        return res.status(400).json({ error: 'File name or path is missing' });
+        return res.status(400).json({ error: "File name or path is missing" });
     }
-    const parts = originalname.split('.');
+    const parts = originalname.split(".");
     const ext = parts[parts.length - 1];
-    const newPath = path + '.' + ext;
+    const newPath = path + "." + ext;
     fs_1.default.renameSync(path, newPath);
     const { token } = req.cookies;
     jsonwebtoken_1.default.verify(token, secret, {}, (err, info) => __awaiter(void 0, void 0, void 0, function* () {
         if (err)
             throw err;
         const { title, summary, content } = req.body;
-        if (!info || typeof info === 'string') {
-            return res.status(401).json({ error: 'Unauthorized' });
+        if (!info || typeof info === "string") {
+            return res.status(401).json({ error: "Unauthorized" });
         }
         const postDoc = yield Post_1.default.create({
             title,
             summary,
             content,
             cover: newPath,
-            author: info.id
+            author: info.id,
         });
         res.json(postDoc);
     }));
 }));
-app.get('/post', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json(yield Post_1.default.find().populate('author', ['username']));
+app.get("/post", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json(yield Post_1.default.find().populate("author", ["username"]).sort({ createdAt: -1 }).limit(20));
 }));
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
