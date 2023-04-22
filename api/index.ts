@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import express, { Express, Request, Response } from "express";
+import express, { Express, Request, Response, application } from "express";
 const port = 8000;
 import cors from "cors";
 import mongoose from "mongoose";
@@ -21,7 +21,11 @@ const secret = "sdadjanfjknfnqeiwdhd123245";
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/uploads', express.static(process.cwd + '/uploads'))
+// app.use('/uploads', path.join(__dirname + 'uploads'))
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use(express.static('uploads'))
+app.use('/uploads', express.static('uploads'))
+
 
 const databaseSecret = process.env.DATABASE_SECRET;
 
@@ -91,7 +95,7 @@ app.post(
     }
     const parts = originalname.split(".");
     const ext = parts[parts.length - 1];
-    const newPath = path + "." + ext;
+    const newPath = path+"."+ ext;
     fs.renameSync(path, newPath);
 
     const { token } = req.cookies;
@@ -113,11 +117,23 @@ app.post(
   }
 );
 
+// app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
+//   if (req.file) {
+
+//   }
+// })
+
 app.get("/post", async (req, res) => {
   res.json(
     await Post.find().populate("author", ["username"]).sort({ createdAt: -1 }).limit(20)
   );
 });
+
+app.get('/post/:id', async (req, res) => {
+  const { id } = req.params
+  const postDoc = await Post.findById(id).populate('author', ['username'])
+  res.json(postDoc)
+})
 
 app.listen(port, () => {
   console.log(`listening on port ${port}`);

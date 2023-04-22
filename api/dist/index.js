@@ -55,7 +55,10 @@ const secret = "sdadjanfjknfnqeiwdhd123245";
 app.use((0, cors_1.default)({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
-app.use('/uploads', express_1.default.static(process.cwd + '/uploads'));
+// app.use('/uploads', path.join(__dirname + 'uploads'))
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use(express.static('uploads'))
+app.use('/uploads', express_1.default.static('uploads'));
 const databaseSecret = process.env.DATABASE_SECRET;
 if (!databaseSecret) {
     throw new Error("DATABASE_SECRET is not defined");
@@ -138,8 +141,17 @@ app.post("/post", uploadMiddleware.single("file"), (req, res) => __awaiter(void 
         res.json(postDoc);
     }));
 }));
+// app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
+//   if (req.file) {
+//   }
+// })
 app.get("/post", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(yield Post_1.default.find().populate("author", ["username"]).sort({ createdAt: -1 }).limit(20));
+}));
+app.get('/post/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    const postDoc = yield Post_1.default.findById(id).populate('author', ['username']);
+    res.json(postDoc);
 }));
 app.listen(port, () => {
     console.log(`listening on port ${port}`);

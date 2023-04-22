@@ -1,6 +1,7 @@
 import { createContext, useState } from 'react'
 
 interface User {
+    id: string
     password: string;
     username?: string
 }
@@ -12,7 +13,7 @@ interface UserContextType {
 
 export const UserContext = createContext<UserContextType>({
     setUserInfo: () => {},
-    userInfo: { password: ''}
+    userInfo: { password: '', id: ''}
 })
 
 interface UserContextProviderProps {
