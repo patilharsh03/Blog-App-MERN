@@ -1,6 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import express, { Express, Request, Response, application } from "express";
+import express, { Express, Request, Response } from "express";
 const port = 8000;
 import cors from "cors";
 import mongoose from "mongoose";
@@ -117,11 +117,35 @@ app.post(
   }
 );
 
-// app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
-//   if (req.file) {
+app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
+  let newPath: string | null = null
+  if (req.file) {
+    const { originalname, path} = req.file
+    const parts = originalname.split('.')
+    const ext = parts[parts.length - 1]
+    newPath = path+'.'+ext
+    fs.renameSync(path, newPath)
+  }
 
-//   }
-// })
+  const { token } = req.cookies
+  jwt.verify(token, secret, {}, async (err, info) => {
+    if (err) throw err
+    const { id, title, summary, content } = req.body
+    const postDoc = await Post.findById(id)
+
+    const isAuthor = JSON.stringify(postDoc?.author) === JSON.stringify((info as jwt.JwtPayload)?.id)
+    if (!isAuthor) {
+      return res.json(400).json('you are not the author')
+    }
+    await postDoc?.updateOne({
+      title,
+      summary,
+      content,
+      cover: newPath ? newPath : postDoc?.cover
+    })
+    res.json(postDoc)
+  })
+})
 
 app.get("/post", async (req, res) => {
   res.json(

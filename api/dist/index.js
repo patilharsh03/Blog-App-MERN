@@ -141,10 +141,34 @@ app.post("/post", uploadMiddleware.single("file"), (req, res) => __awaiter(void 
         res.json(postDoc);
     }));
 }));
-// app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
-//   if (req.file) {
-//   }
-// })
+app.put('/post', uploadMiddleware.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let newPath = null;
+    if (req.file) {
+        const { originalname, path } = req.file;
+        const parts = originalname.split('.');
+        const ext = parts[parts.length - 1];
+        newPath = path + '.' + ext;
+        fs_1.default.renameSync(path, newPath);
+    }
+    const { token } = req.cookies;
+    jsonwebtoken_1.default.verify(token, secret, {}, (err, info) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err)
+            throw err;
+        const { id, title, summary, content } = req.body;
+        const postDoc = yield Post_1.default.findById(id);
+        const isAuthor = JSON.stringify(postDoc === null || postDoc === void 0 ? void 0 : postDoc.author) === JSON.stringify(info === null || info === void 0 ? void 0 : info.id);
+        if (!isAuthor) {
+            return res.json(400).json('you are not the author');
+        }
+        yield (postDoc === null || postDoc === void 0 ? void 0 : postDoc.updateOne({
+            title,
+            summary,
+            content,
+            cover: newPath ? newPath : postDoc === null || postDoc === void 0 ? void 0 : postDoc.cover
+        }));
+        res.json(postDoc);
+    }));
+}));
 app.get("/post", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.json(yield Post_1.default.find().populate("author", ["username"]).sort({ createdAt: -1 }).limit(20));
 }));

@@ -5,7 +5,7 @@ interface EditorProps {
   onChange: (value: string) => void;
 }
 
-const Editor = ({ value, onChange }: EditorProps) => {
+const Editor: React.FC<EditorProps> = ({ value, onChange }) => {
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
