@@ -172,6 +172,24 @@ div.post-page a.edit-btn {
   text-decoration: none;
 }
 
+div.delete-row {
+  text-align: center;
+  margin-top: 10px;
+}
+
+div.delete-page a.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  background-color: #b9a9a9;
+  padding: 15px 30px;
+  gap: 4px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 500;
+  color: red;
+
+}
+
 a svg {
   height: 20px;
 }
