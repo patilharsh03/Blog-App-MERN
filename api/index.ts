@@ -159,6 +159,20 @@ app.get('/post/:id', async (req, res) => {
   res.json(postDoc)
 })
 
+app.delete('/post/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const post = await Post.findByIdAndDelete(id)
+    if (!post) {
+      res.status(404).json({ message: 'Post not found'})
+    } else {
+      res.json({ message: 'Post Deleted'})
+    }
+  } catch (error: unknown) {
+    res.status(500).json({ message: (error as Error).message })
+  }
+})
+
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });

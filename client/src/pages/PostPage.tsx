@@ -2,6 +2,7 @@ import { formatISO9075 } from "date-fns";
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
+import DeletePost from "./DeletePost";
 
 interface Post {
   _id: string;
@@ -56,6 +57,7 @@ const PostPage = () => {
             </svg>
             Edit this post
           </Link>
+          <DeletePost />
         </div>
       )}
       <div className="image">

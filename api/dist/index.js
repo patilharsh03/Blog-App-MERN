@@ -177,6 +177,21 @@ app.get('/post/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* (
     const postDoc = yield Post_1.default.findById(id).populate('author', ['username']);
     res.json(postDoc);
 }));
+app.delete('/post/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id } = req.params;
+    try {
+        const post = yield Post_1.default.findByIdAndDelete(id);
+        if (!post) {
+            res.status(404).json({ message: 'Post not found' });
+        }
+        else {
+            res.json({ message: 'Post Deleted' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}));
 app.listen(port, () => {
     console.log(`listening on port ${port}`);
 });

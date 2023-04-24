@@ -11,7 +11,7 @@ const EditPost = () => {
   const [redirect, setRedirect] = useState(false)
 
   useEffect(() => {
-    fetch(`http"//localhost:8000/post/${id}`).then(response => {
+    fetch(`http://localhost:8000/post/${id}`).then(response => {
         response.json().then(postInfo => {
             setTitle(postInfo.title)
             setContent(postInfo.content)
