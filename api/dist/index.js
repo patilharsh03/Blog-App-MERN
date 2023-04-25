@@ -38,7 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv = __importStar(require("dotenv"));
 dotenv.config();
 const express_1 = __importDefault(require("express"));
-const port = 8000;
+const PORT = process.env.PORT || 8000;
 const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const User_1 = __importDefault(require("./models/User"));
@@ -192,6 +192,6 @@ app.delete('/post/:id', (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(500).json({ message: error.message });
     }
 }));
-app.listen(port, () => {
-    console.log(`listening on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`listening on port ${PORT}`);
 });

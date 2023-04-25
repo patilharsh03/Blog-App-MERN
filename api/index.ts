@@ -1,7 +1,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express, { Express, Request, Response } from "express";
-const port = 8000;
+const PORT = process.env.PORT || 8000;
 import cors from "cors";
 import mongoose from "mongoose";
 import User from "./models/User";
@@ -173,6 +173,6 @@ app.delete('/post/:id', async (req, res) => {
   }
 })
 
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`listening on port ${PORT}`);
 });
