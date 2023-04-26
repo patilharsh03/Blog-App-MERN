@@ -18,7 +18,8 @@ const app: Express = express();
 const salt = bcrypt.genSaltSync(10);
 const secret = "sdadjanfjknfnqeiwdhd123245";
 
-app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+// app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
+app.use(cors({ credentials: true, origin: "https://blog-app-mern-lemon.vercel.app/" }));
 app.use(express.json());
 app.use(cookieParser());
 // app.use('/uploads', path.join(__dirname + 'uploads'))
