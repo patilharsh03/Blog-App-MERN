@@ -136,7 +136,7 @@ app.put('/post', uploadMiddleware.single('file'), async (req, res) => {
 
     const isAuthor = JSON.stringify(postDoc?.author) === JSON.stringify((info as jwt.JwtPayload)?.id)
     if (!isAuthor) {
-      return res.json(400).json('you are not the author')
+      return res.status(400).json('you are not the author')
     }
     await postDoc?.updateOne({
       title,

@@ -159,7 +159,7 @@ app.put('/post', uploadMiddleware.single('file'), (req, res) => __awaiter(void 0
         const postDoc = yield Post_1.default.findById(id);
         const isAuthor = JSON.stringify(postDoc === null || postDoc === void 0 ? void 0 : postDoc.author) === JSON.stringify(info === null || info === void 0 ? void 0 : info.id);
         if (!isAuthor) {
-            return res.json(400).json('you are not the author');
+            return res.status(400).json('you are not the author');
         }
         yield (postDoc === null || postDoc === void 0 ? void 0 : postDoc.updateOne({
             title,
