@@ -6,7 +6,8 @@ const RegisterPage = () => {
 
   async function register(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const response = await fetch('http://localhost:8000/register', {
+    // const response = await fetch('http://localhost:8000/register', {
+    const response = await fetch('https://blog-app-backend-vxel.onrender.com/register', {
       method: 'POST',
       body: JSON.stringify({username, password}),
       headers: {'Content-Type': 'application/json'},

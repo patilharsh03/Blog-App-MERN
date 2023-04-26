@@ -24,7 +24,8 @@ const PostPage = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    fetch(`http://localhost:8000/post/${id}`).then((response) => {
+    // fetch(`http://localhost:8000/post/${id}`).then((response) => {
+    fetch(`https://blog-app-backend-vxel.onrender.com/post/${id}`).then((response) => {
       response.json().then((postInfo) => {
         setPostInfo(postInfo);
       });
@@ -61,7 +62,8 @@ const PostPage = () => {
         </div>
       )}
       <div className="image">
-        <img src={`http://localhost:8000/${postInfo.cover}`} alt="" />
+        {/* <img src={`http://localhost:8000/${postInfo.cover}`} alt="" /> */}
+        <img src={`https://blog-app-backend-vxel.onrender.com/${postInfo.cover}`} alt="" />
       </div>
       <div
         className="content"

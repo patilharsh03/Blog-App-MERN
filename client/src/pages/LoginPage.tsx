@@ -10,7 +10,8 @@ const LoginPage = () => {
 
   async function login (e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const response = await fetch('http://localhost:8000/login', {
+    // const response = await fetch('http://localhost:8000/login', {
+    const response = await fetch('https://blog-app-backend-vxel.onrender.com/login', {
       method: 'POST',
       body: JSON.stringify({username, password}),
       headers: {'Content-Type': 'application/json'},

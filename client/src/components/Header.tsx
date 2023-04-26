@@ -6,7 +6,8 @@ const Header = () => {
   const {setUserInfo, userInfo} = useContext(UserContext)
 
   useEffect(() => {
-    fetch("http://localhost:8000/profile", {
+    // fetch("http://localhost:8000/profile", {
+    fetch("https://blog-app-backend-vxel.onrender.com/profile", {
       credentials: "include",
     }).then((response) => {
       response.json().then((userInfo) => {  
@@ -16,7 +17,8 @@ const Header = () => {
   }, []);
 
   function logout() {
-    fetch('http://localhost:8000/logout', {
+    // fetch('http://localhost:8000/logout', {
+    fetch('https://blog-app-backend-vxel.onrender.com/logout', {
       credentials: 'include',
       method: 'POST'
     })

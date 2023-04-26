@@ -7,7 +7,8 @@ const DeletePost = () => {
   const [error, setError] = useState<string | null>(null);
 
   async function handleDelete() {
-    const response = await fetch(`http://localhost:8000/post/${id}`, {
+    // const response = await fetch(`http://localhost:8000/post/${id}`, {
+    const response = await fetch(`https://blog-app-backend-vxel.onrender.com/post/${id}`, {
       method: "DELETE",
       credentials: "include",
     });

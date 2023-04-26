@@ -6,7 +6,8 @@ const IndexPage = () => {
   const [posts, setPosts] = useState<PostProps[]>([])
 
   useEffect(() => {
-    fetch('http://localhost:8000/post').then(response => {
+    // fetch('http://localhost:8000/post').then(response => {
+    fetch('https://blog-app-backend-vxel.onrender.com/post').then(response => {
       response.json().then(posts => {
         setPosts(posts)
       })
