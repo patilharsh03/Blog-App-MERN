@@ -53,7 +53,7 @@ const app = (0, express_1.default)();
 const salt = bcrypt_1.default.genSaltSync(10);
 const secret = "sdadjanfjknfnqeiwdhd123245";
 // app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
-app.use((0, cors_1.default)({ credentials: true, origin: "https://blog-app-mern-two.vercel.app/" }));
+app.use((0, cors_1.default)({ credentials: true, origin: "https://blog-app-mern-two.vercel.app" }));
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
 // app.use('/uploads', path.join(__dirname + 'uploads'))
